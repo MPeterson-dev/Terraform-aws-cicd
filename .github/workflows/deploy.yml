@@ -44,6 +44,7 @@ jobs:
         working-directory: ./terraform
       - name: Set output
         id: set-ip
+        working-directory: ./terraform
         run: |-
           echo "public_ip=$(terraform output -raw instance_public_ip)" >> "$GITHUB_OUTPUT"
   deploy-app:
@@ -82,7 +83,7 @@ jobs:
             sudo apt update
             sudo apt install docker.io -y
             sudo apt install awscli -y
-            sudo $(aws ecr get-login-password --region us-west-1 | sudo docker login --username AWS --password-stdin "$REGISTRY");
+            sudo aws ecr get-login-password --region us-west-1 | sudo docker login --username AWS --password-stdin "$REGISTRY"
             sudo docker stop myappcontainer || true
             sudo docker rm myappcontainer || true
             sudo docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
