@@ -19,9 +19,9 @@ jobs:
       SERVER_PUBLIC_IP: ${{ steps.set-ip.outputs.public_ip }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v4
         with:
           terraform_wrapper: false
       - name: Terraform init
