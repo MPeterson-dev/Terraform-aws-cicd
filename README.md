@@ -4,6 +4,11 @@ A hands-on DevOps project that deploys a containerized Node.js application to AW
 
 Built by following and troubleshooting a [CI/CD with Terraform and AWS tutorial](https://www.youtube.com/watch?v=5sZAx2ylsOo), with updates for the AWS account setup and application runtime used in this project.
 
+Deployment Verification
+<img width="1498" height="383" alt="image" src="https://github.com/user-attachments/assets/904a29d2-aa84-4c92-a20e-ae3fc863c8b1" />
+<img width="1092" height="662" alt="image" src="https://github.com/user-attachments/assets/56f26694-77aa-41b4-bab5-d90a59023b53" />
+
+
 ## Deployment flow
 
 Push to GitHub
