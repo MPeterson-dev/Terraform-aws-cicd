@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:24-bookworm-slim
 WORKDIR /usr/app
 COPY package.json .
 RUN npm install
