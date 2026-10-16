@@ -6,25 +6,23 @@ Built by following and troubleshooting a [CI/CD with Terraform and AWS tutorial]
 
 ## Deployment flow
 
-```text
 Push to GitHub
-    |
-    v
+|
+v
 GitHub Actions: deploy-infra
-    |-- Initialize Terraform with S3 remote state
-    |-- Plan and apply infrastructure changes
-    |-- Export the EC2 public IP
-    |
-    v
+|-- Initialize Terraform with S3 remote state
+|-- Plan and apply infrastructure changes
+|-- Export the EC2 public IP
+|
+v
 GitHub Actions: deploy-app
-    |-- Build the Docker image
-    |-- Push the image to Amazon ECR
-    |-- Connect to EC2 over SSH
-    |-- Pull and run the new image
-    |
-    v
+|-- Build the Docker image
+|-- Push the image to Amazon ECR
+|-- Connect to EC2 over SSH
+|-- Pull and run the new image
+|
+v
 HTTP request -> EC2 port 80 -> container port 8080 -> Node.js app
-```
 
 The deployed application returns `Service is up and running`.
 
@@ -42,21 +40,19 @@ The deployed application returns `Service is up and running`.
 
 ## Project structure
 
-```text
 .github/
-  workflows/
-    deploy.yml
+workflows/
+deploy.yml
 nodeapp/
-  app.js
-  Dockerfile
-  package.json
-  package-lock.json
+app.js
+Dockerfile
+package.json
+package-lock.json
 terraform/
-  main.tf
-  variables.tf
+main.tf
+variables.tf
 .gitignore
 README.md
-```
 
 ## Infrastructure
 
@@ -71,9 +67,7 @@ The S3 state bucket, ECR repository, IAM deployment user, and EC2 IAM role are c
 
 Terraform stores state at:
 
-```text
 s3://<your-state-bucket>/aws/ec2-deploy/terraform.tfstate
-```
 
 ## Setup
 
@@ -116,35 +110,27 @@ Never commit private keys, AWS credentials, Terraform state, or secret variable 
 3. Use a supported Node.js Docker base image. This project was updated to `node:24-bookworm-slim` to resolve a dependency/runtime incompatibility.
 4. Push changes to the workflow's configured branch:
 
-```text
 Complete-CI/CD-with-Terraform-AWS
-```
 
 5. Open the repository's **Actions** tab and inspect both `deploy-infra` and `deploy-app`.
 6. When deployment completes, open:
 
-```text
 http://<current-ec2-public-ip>
-```
 
 A successful workflow does not by itself prove the application is healthy. Verify the HTTP response and container status.
 
 ## Useful checks
 
 Format and validate Terraform from the `terraform` directory after initialization:
-
-```sh
+sh
 terraform fmt
 terraform validate
-```
 
 On the EC2 instance:
-
-```sh
+sh
 sudo docker ps -a
 sudo docker logs --tail 50 myappcontainer
 curl -v http://localhost:80
-```
 
 The workflow maps host port `80` to application port `8080`. The application must listen on port 8080 and accept connections from outside the container's loopback interface.
 
@@ -169,11 +155,9 @@ AWS resources can consume credits or incur charges while this project exists. Fr
 - For a short break, stop the EC2 instance. Compute usage stops, but attached EBS storage and other stored resources can continue to incur usage.
 - Starting the instance again can change its public IPv4 address. The current Docker command does not configure an automatic restart policy, so the application container may need to be started or redeployed after a reboot.
 - To remove Terraform-managed infrastructure, initialize Terraform against the **same S3 backend** and supply the same required variables, then review a destroy plan:
-
-```sh
-terraform plan -destroy -out=destroy.tfplan
-terraform apply destroy.tfplan
-```
+  sh
+  terraform plan -destroy -out=destroy.tfplan
+  terraform apply destroy.tfplan
 
 The second command deletes the resources in that plan. Store plan files securely and do not commit them. Keep the state bucket until destruction has completed successfully.
 
