@@ -1,0 +1,20 @@
+# Node dependencies
+node_modules/
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+*.tfvars.json
+crash*.log
+
+# Secrets and private keys
+.env
+.env.*
+*.pem
+*.key
+terraform-aws
+id_rsa
+id_ed25519
