@@ -16,7 +16,7 @@ jobs:
   deploy-infra:
     runs-on: ubuntu-latest
     outputs:
-      SERVER_PUBLIC_IP: ${{ steps.set-ip.outputs.instance_instance_public_ip}}
+      SERVER_PUBLIC_IP: ${{ steps.set-ip.outputs.public_ip }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -45,7 +45,7 @@ jobs:
       - name: Set output
         id: set-ip
         run: |-
-          echo "::set-output name=instance_instance_public_ip::@(terraform output instance_public_ip)"
+          echo "public_ip=$(terraform output -raw instance_public_ip)" >> "$GITHUB_OUTPUT"
   deploy-app:
     runs-on: ubuntu-latest
     needs: deploy-infra
@@ -53,7 +53,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Set IP env variable
-        run: echo "SERVER_PUBLIC_IP=$(terraform output -raw instance_public_ip)" >> "$GITHUB_ENV"
+        run: echo "SERVER_PUBLIC_IP=${{ needs.deploy-infra.outputs.SERVER_PUBLIC_IP }}" >> "$GITHUB_ENV"
       - name: Login to AWS ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
@@ -81,8 +81,8 @@ jobs:
           script: |-
             sudo apt update
             sudo apt install docker.io -y
-            sudo apt instal awscli -y
-            sudo $(aws ecr get-login --no-include-email --region us-west-1);
+            sudo apt install awscli -y
+            sudo $(aws ecr get-login-password --region us-west-1 | sudo docker login --username AWS --password-stdin "$REGISTRY");
             sudo docker stop myappcontainer || true
             sudo docker rm myappcontainer || true
             sudo docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
